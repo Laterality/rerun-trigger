@@ -1,5 +1,0 @@
-server:
-  port: 8000
-spec:
-  image: nginx
-  containerName: webserver

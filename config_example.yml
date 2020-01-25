@@ -1,0 +1,6 @@
+server:
+  port: 8000
+spec:
+  image: nginx
+  containerName: webserver
+  initialTag: "1.17"
