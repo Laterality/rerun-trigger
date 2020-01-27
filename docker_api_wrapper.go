@@ -49,7 +49,7 @@ func (w *envWrapper) Pull(imagePath string) error {
 func (w *envWrapper) Run(option ContainerStartOption) (ContainerID, error) {
 	portMap, err := w.newPortMap(option.ports)
 	if err != nil {
-		log.Println("Error occurred whil create port binding")
+		log.Println("Error occurred while create port binding")
 		return "", err
 	}
 	con, err := w.client.ContainerCreate(w.ctx, &container.Config{
