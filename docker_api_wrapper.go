@@ -40,7 +40,9 @@ type envWrapper struct {
 }
 
 func (w *envWrapper) Pull(imagePath string) error {
-	_, err := w.client.ImagePull(w.ctx, imagePath, types.ImagePullOptions{})
+	out, err := w.client.ImagePull(w.ctx, imagePath, types.ImagePullOptions{})
+	// Output must be handled
+	ioutil.ReadAll(out)
 	return err
 }
 
