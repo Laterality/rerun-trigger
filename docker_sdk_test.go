@@ -13,7 +13,7 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-func TestListContainer(t *testing.T) {
+func _TestListContainer(t *testing.T) {
 	ctx := context.Background()
 	cli, _ := client.NewEnvClient()
 	containers, _ := cli.ContainerList(ctx, types.ContainerListOptions{})
@@ -22,7 +22,7 @@ func TestListContainer(t *testing.T) {
 	}
 }
 
-func TestPullImage(t *testing.T) {
+func _TestPullImage(t *testing.T) {
 	ctx := context.Background()
 	cli, _ := client.NewEnvClient()
 
@@ -34,7 +34,7 @@ func TestPullImage(t *testing.T) {
 	io.Copy(os.Stdout, out)
 }
 
-func TestRunContainer(t *testing.T) {
+func _TestRunContainer(t *testing.T) {
 	ctx := context.Background()
 	cli, _ := client.NewEnvClient()
 
