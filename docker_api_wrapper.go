@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
 	"log"
 	"strconv"
 
@@ -21,7 +22,7 @@ type ContainerPort = int
 type HostPort = int
 
 type DockerClientWrapper interface {
-	Pull(image string) error
+	Pull(imagePath string) error
 	Run(option ContainerStartOption) (ContainerID, error)
 	Stop(id string) error
 	Remove(id string) error
