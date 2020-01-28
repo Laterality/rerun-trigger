@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"errors"
+	"io"
 	"io/ioutil"
 	"log"
 	"strconv"
@@ -28,13 +30,6 @@ type DockerClientWrapper interface {
 	Remove(id string) error
 }
 
-type ContainerStartOption struct {
-	name      string // Name of container
-	imagePath string // Path to pull image
-	image     string // Name with tag of image
-	ports     map[ContainerPort]HostPort
-}
-
 type envWrapper struct {
 }
 
@@ -52,8 +47,11 @@ func (w *envWrapper) getClient() *client.Client {
 
 func (w *envWrapper) Pull(imagePath string) error {
 	out, err := w.getClient().ImagePull(w.getContext(), imagePath, types.ImagePullOptions{})
-	// Output must be handled
-	ioutil.ReadAll(out)
+	if out == nil {
+		return errors.New("Output of pulling image is nil, Please check if image path is valid")
+	}
+	// Output must be handled, do nothing
+	io.Copy(ioutil.Discard, out)
 	return err
 }
 
