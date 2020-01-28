@@ -7,19 +7,25 @@ import (
 )
 
 type Config struct {
-	Server struct {
-		Port int `yaml:"port"`
-	}
-	Spec struct {
-		ImageName     string `yaml:"image"`
-		ImagePath     string `yaml:"imagePath"`
-		ContainerName string `yaml:"containerName"`
-		InitialTag    string `yaml:"initialTag"`
-		Ports         []struct {
-			ContainerPort int `yaml:"containerPort"`
-			HostPort      int `yaml:"hostPort"`
-		} `yamle:"ports"`
-	} `yaml:"spec"`
+	Server ServerConfig  `yaml: "server"`
+	Spec   ContainerSpec `yaml:"spec"`
+}
+
+type ServerConfig struct {
+	Port int `yaml:"port"`
+}
+
+type ContainerSpec struct {
+	ImageName     string        `yaml:"image"`
+	ImagePath     string        `yaml:"imagePath"`
+	ContainerName string        `yaml:"containerName"`
+	InitialTag    string        `yaml:"initialTag"`
+	Ports         []PortBinding `yaml:"ports"`
+}
+
+type PortBinding struct {
+	ContainerPort int `yaml:"containerPort"`
+	HostPort      int `yaml:"hostPort"`
 }
 
 func NewConfigFromFile(path string) (*Config, error) {
