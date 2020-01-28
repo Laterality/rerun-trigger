@@ -36,24 +36,36 @@ type ContainerStartOption struct {
 }
 
 type envWrapper struct {
-	ctx    context.Context
-	client *client.Client
+}
+
+func (w *envWrapper) getContext() context.Context {
+	return context.Background()
+}
+
+func (w *envWrapper) getClient() *client.Client {
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		panic(err)
+	}
+	return cli
 }
 
 func (w *envWrapper) Pull(imagePath string) error {
-	out, err := w.client.ImagePull(w.ctx, imagePath, types.ImagePullOptions{})
+	out, err := w.getClient().ImagePull(w.getContext(), imagePath, types.ImagePullOptions{})
 	// Output must be handled
 	ioutil.ReadAll(out)
 	return err
 }
 
 func (w *envWrapper) Run(option ContainerStartOption) (ContainerID, error) {
+	ctx := w.getContext()
+	cli := w.getClient()
 	portMap, err := w.newPortMap(option.ports)
 	if err != nil {
 		log.Println("Error occurred while create port binding")
 		return "", err
 	}
-	con, err := w.client.ContainerCreate(w.ctx, &container.Config{
+	con, err := cli.ContainerCreate(ctx, &container.Config{
 		Image: option.image,
 	}, &container.HostConfig{
 		PortBindings: portMap,
@@ -62,7 +74,7 @@ func (w *envWrapper) Run(option ContainerStartOption) (ContainerID, error) {
 		return "", err
 	}
 
-	w.client.ContainerStart(w.ctx, con.ID, types.ContainerStartOptions{})
+	cli.ContainerStart(ctx, con.ID, types.ContainerStartOptions{})
 	return con.ID, nil
 }
 
@@ -80,20 +92,14 @@ func (w *envWrapper) newPortMap(ports map[ContainerPort]HostPort) (nat.PortMap, 
 }
 
 func (w *envWrapper) Stop(id string) error {
-	return w.client.ContainerStop(w.ctx, id, nil)
+	return w.getClient().ContainerStop(w.getContext(), id, nil)
 }
 
 func (w *envWrapper) Remove(id string) error {
-	return w.client.ContainerRemove(w.ctx, id, types.ContainerRemoveOptions{})
+	return w.getClient().ContainerRemove(w.getContext(), id, types.ContainerRemoveOptions{})
 }
 
 // NewEnvClientWrapper constructs docker client object based environment variables
 func NewEnvClientWrapper() DockerClientWrapper {
-	ctx := context.Background()
-	cli, _ := client.NewEnvClient()
-	wrapper := new(envWrapper)
-	wrapper.client = cli
-	wrapper.ctx = ctx
-
-	return wrapper
+	return new(envWrapper)
 }
