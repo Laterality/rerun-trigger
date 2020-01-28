@@ -19,7 +19,6 @@ type ContainerSpec struct {
 	ImageName     string        `yaml:"image"`
 	ImagePath     string        `yaml:"imagePath"`
 	ContainerName string        `yaml:"containerName"`
-	InitialTag    string        `yaml:"initialTag"`
 	Ports         []PortBinding `yaml:"ports"`
 }
 
